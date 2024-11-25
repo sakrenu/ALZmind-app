@@ -8,7 +8,7 @@
 
 .landing-page {
   background-image: url('/background.png'); /* Reference relative to 'public/' */
-  background-color: rgba(230, 230, 250, 0.8);
+  background-color: rgba(230, 230, 250, 0.60);
   background-blend-mode: overlay;
   background-size: cover;
   background-position: center;
