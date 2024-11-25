@@ -1,0 +1,39 @@
+:root {
+  --deepviolet: #373784;
+  --ultraviolet: #5F599A;
+  --africanviolet: #877BB0;
+  --periwinkle: #B7B1D5;
+  --lavender: #E6E6FA;
+}
+
+.bg-deepviolet {
+  background-color: var(--deepviolet);
+}
+
+.text-deepviolet {
+  color: var(--deepviolet);
+}
+
+.bg-ultraviolet {
+  background-color: var(--ultraviolet);
+}
+
+.text-ultraviolet {
+  color: var(--ultraviolet);
+}
+
+.bg-africanviolet {
+  background-color: var(--africanviolet);
+}
+
+.text-africanviolet {
+  color: var(--africanviolet);
+}
+
+.text-periwinkle {
+  color: var(--periwinkle);
+}
+
+.bg-lavender {
+  background-color: var(--lavender);
+}

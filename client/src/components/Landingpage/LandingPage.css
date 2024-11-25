@@ -1,0 +1,65 @@
+:root {
+  --deepviolet: #373784;
+  --ultraviolet: #5F599A;
+  --africanviolet: #877BB0;
+  --periwinkle: #B7B1D5;
+  --lavender: #E6E6FA;
+}
+
+.landing-page {
+  background-image: url('/background.png'); /* Reference relative to 'public/' */
+  background-color: rgba(230, 230, 250, 0.8);
+  background-blend-mode: overlay;
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
+
+
+.navbar {
+  background-color: var(--deepviolet);
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  color: white;
+}
+
+.link-button {
+  background-color: var(--ultraviolet);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.link-button:hover {
+  background-color: var(--africanviolet);
+  transform: scale(1.05);
+}
+
+.arrow-bounce {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 15px solid white;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0) translateX(-50%);
+  }
+  40% {
+    transform: translateY(-10px) translateX(-50%);
+  }
+  60% {
+    transform: translateY(-5px) translateX(-50%);
+  }
+}
