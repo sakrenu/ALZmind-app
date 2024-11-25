@@ -1,0 +1,38 @@
+.vscode/
+.idea/
+# Virtual environment
+client/node_modules/
+venv/
+backend/venv/
+
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+backend/__pycache__/
+
+*.log
+*.tmp
+
+backend/models/row.h5
+backend/venv/Lib/site-packages/tensorflow/python/_pywrap_tensorflow_internal.pyd
+backend/venv/Lib/site-packages/clang/native/libclang.dll
+
+
+# Temporary/cache files
+.cache/
+
+# Build files
+dist/
+build/
+
+node_modules/
+.env
+
+client/src/firebaseServiceAccount.json
+client/src/cloudinaryConfig.json
+
+
+
