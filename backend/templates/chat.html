@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #151B54;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .message {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+        .user {
+            background-color: #373784; /* Deep Violet */
+            color: white;
+        }
+        .assistant {
+            background-color: #877BB0; /* African Violet */
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center mb-6 text-white">Chat with the Assistant</h1>
+
+        <div id="chat" class="bg-africanviolet p-4 rounded-lg shadow-lg mb-6 max-h-96 overflow-y-auto">
+            <!-- Dynamic messages will be appended here -->
+        </div>
+
+        <form id="chatForm" class="flex">
+            <input type="text" id="user_input" name="user_input" placeholder="Type your message..." required class="flex-1 p-2 border rounded-l-md bg-lavender text-deepviolet">
+            <button type="submit" class="bg-deepviolet text-white px-4 py-2 rounded-r-md hover:bg-ultraviolet">Send</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById("chatForm");
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const user_input = document.getElementById("user_input").value;
+
+            try {
+                // Sending user input to the backend
+                const response = await fetch("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_input }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch response from server");
+                }
+
+                const result = await response.json();
+                const chat = document.getElementById("chat");
+
+                // Append user's message
+                const userMessage = document.createElement("div");
+                userMessage.classList.add("message", "user");
+                userMessage.innerHTML = `<strong>User:</strong> ${user_input}`;
+                chat.appendChild(userMessage);
+
+                // Append assistant's response
+                const assistantMessage = document.createElement("div");
+                assistantMessage.classList.add("message", "assistant");
+                assistantMessage.innerHTML = `<strong>Assistant:</strong> ${result.response}`;
+                chat.appendChild(assistantMessage);
+
+                // Clear input field
+                document.getElementById("user_input").value = "";
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        });
+    </script>
+</body>
+</html>

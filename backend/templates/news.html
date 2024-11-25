@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --deepviolet: #373737;
+            --ultraviolet: #5F599A;
+            --africanviolet: #877BB0;
+            --periwinkle: #B7B1D5;
+            --lavender: #E6E6FA;
+        }
+
+        .landing-page {
+            background-color: var(--lavender); /* Lavender background */
+            min-height: 100vh;
+            color: var(--deepviolet); /* Default deep violet text color */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: var(--deepviolet); /* Title in deep violet */
+        }
+
+        h2 {
+            color: var(--white); /* Article titles in white */
+        }
+
+        h5 {
+            color: var(--deepviolet); /* Subheadings in deep violet */
+            background-color: var(--periwinkle); /* Periwinkle background for article descriptions */
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        p {
+            color: var(--white); /* White text for other details */
+        }
+
+        a {
+            color: var(--ultraviolet); /* Ultraviolet for links */
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover for emphasis */
+        }
+
+        hr {
+            border: 1px solid var(--africanviolet); /* African violet divider lines */
+            width: 80%;
+        }
+    </style>
+</head>
+<body class="landing-page">
+    <h1 class="text-3xl font-bold mb-6 text-deepviolet">Latest News</h1>
+
+    {% for article in articles %}
+        <div class="bg-africanviolet shadow-lg rounded-lg p-6 mb-6 w-full max-w-2xl text-white">
+            <h2 class="text-xl font-bold mb-2">{{ article.title | escape }}</h2>
+            <h5 class="bg-yellow p-2 rounded mb-2 text-deepviolet">{{ article.description }}</h5>
+            <p>Link: <a href="{{ article.url }}" target="_blank" class="text-ultraviolet underline hover:text-deepviolet">{{ article.url[:80] }}...</a></p>
+            <p>Author: {{ article.author }}, <i>{{ article.publishedAt[:10] }}</i></p>
+        </div>
+        <hr class="border-africanviolet w-4/5 mb-6">
+    {% endfor %}
+
+</body>
+</html>
