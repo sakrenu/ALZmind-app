@@ -235,7 +235,7 @@ const PatientDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
       <div className="bg-africanviolet shadow-lg rounded-lg p-6 col-span-1 md:col-span-2">
         <h2 className="text-xl font-bold mb-4">👤 Welcome, {profile?.name || ''}</h2>
-        <p className="text-periwinkle">{profile?.email}</p>
+        <p className="text-periwinkle">{profile?.email || ''}</p>
         <p className="text-periwinkle mt-2">Next Test: {userData.nextTest}</p>
       </div>
 
