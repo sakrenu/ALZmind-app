@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebaseConfig';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc , setDoc} from 'firebase/firestore';
 import ImageUpload from './ImageUpload';
 import axios from 'axios';
 const DoctorDashboard = () => {
@@ -24,7 +24,15 @@ const DoctorDashboard = () => {
   
   const [alzPredictionResult, setAlzPredictionResult] = useState(null);
   const [mriPredictionResult, setMriPredictionResult] = useState(null);
+  const [showPatientList, setShowPatientList] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showMriClassification, setShowMriClassification] = useState(false);
+  const [showNextMeetForm, setShowNextMeetForm] = useState(false);
+  const [nextMeetData, setNextMeetData] = useState({
+    patient: '',
+    date: '',
+    reason: ''
+  });
   useEffect(() => {
     const fetchPatients = async () => {
       try {
@@ -115,6 +123,21 @@ const DoctorDashboard = () => {
       console.error('Error fetching patient details:', error);
     }
   };
+  const handleNextMeetChange = (e) => {
+    const { name, value } = e.target;
+    setNextMeetData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleNextMeetSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await setDoc(doc(db, 'nextMeet', 'meetDetails'), nextMeetData);
+      setNextMeet(nextMeetData);
+      setShowNextMeetForm(false);
+    } catch (error) {
+      console.error('Error saving next meet details:', error);
+    }
+  };
 
 
   if (loading) {
@@ -137,7 +160,7 @@ const DoctorDashboard = () => {
           <h2 className="text-xl font-bold mb-2">Total Patients</h2>
           <p className="text-2xl text-periwinkle">{patients.length}</p>
         </div>
-        <div className="bg-africanviolet shadow-lg rounded-lg p-6">
+        {/* <div className="bg-africanviolet shadow-lg rounded-lg p-6">
           <h2 className="text-xl font-bold mb-2">Next Meet</h2>
           {nextMeet ? (
             <div>
@@ -161,7 +184,87 @@ const DoctorDashboard = () => {
             <p className="text-periwinkle">No upcoming meets</p>
           )}
         </div>
-      </div>
+      </div> */}
+      <div className="bg-africanviolet shadow-lg rounded-lg p-6">
+          <h2 className="text-xl font-bold mb-2">Next Meet</h2>
+          {nextMeet ? (
+            <div>
+              <p className="text-periwinkle">
+                <strong>Patient:</strong> {nextMeet.patient}
+              </p>
+              <p className="text-periwinkle">
+                <strong>Date:</strong>{' '}
+                {new Date(nextMeet.date).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+              <p className="text-periwinkle">
+                <strong>Reason:</strong> {nextMeet.reason}
+              </p>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowNextMeetForm(true)}
+              className="bg-ultraviolet text-white px-4 py-2 rounded hover:bg-africanviolet"
+            >
+              Schedule Next Meet
+            </button>
+          )}
+          {showNextMeetForm && (
+            <form onSubmit={handleNextMeetSubmit} className="mt-4">
+              <div className="mb-4">
+                <label className="block text-periwinkle mb-2">Patient:</label>
+                <input
+                  type="text"
+                  name="patient"
+                  value={nextMeetData.patient}
+                  onChange={handleNextMeetChange}
+                  className="w-full p-2 border rounded bg-lavender text-deepviolet"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-periwinkle mb-2">Date:</label>
+                <input
+                  type="date"
+                  name="date"
+                  value={nextMeetData.date}
+                  onChange={handleNextMeetChange}
+                  className="w-full p-2 border rounded bg-lavender text-deepviolet"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-periwinkle mb-2">Reason:</label>
+                <input
+                  type="text"
+                  name="reason"
+                  value={nextMeetData.reason}
+                  onChange={handleNextMeetChange}
+                  className="w-full p-2 border rounded bg-lavender text-deepviolet"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="bg-deepviolet text-white px-4 py-2 rounded hover:bg-ultraviolet"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowNextMeetForm(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 ml-2"
+              >
+                Cancel
+              </button>
+            </form>
+          )}
+        </div>
+        </div>
   
       <div className="bg-africanviolet shadow-lg rounded-lg p-6 mb-6">
         <h2 className="text-xl font-bold mb-4">Search Patient</h2>
@@ -214,7 +317,7 @@ const DoctorDashboard = () => {
         )}
       </div>
   
-      <div className="bg-africanviolet shadow-lg rounded-lg p-6 mb-6">
+      {/* <div className="bg-africanviolet shadow-lg rounded-lg p-6 mb-6">
         <h2 className="text-xl font-bold mb-4">Patient List</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
@@ -247,9 +350,57 @@ const DoctorDashboard = () => {
             </tbody>
           </table>
         </div>
+      </div> */}
+      <div className="bg-africanviolet shadow-lg rounded-lg p-6 mb-6">
+        <div className="flex justify-between items-center bg-deepviolet p-4 rounded-lg mb-4">
+          <div>
+            <p className="text-periwinkle">
+              View the list of all patients.
+            </p>
+          </div>
+          <button
+            onClick={() => setShowPatientList(!showPatientList)}
+            className="bg-ultraviolet text-white px-4 py-2 rounded hover:bg-africanviolet"
+          >
+            {showPatientList ? "Hide List" : "View Patient List"}
+          </button>
+        </div>
+        {showPatientList && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-deepviolet text-white">
+                <tr>
+                  <th className="p-4">Name</th>
+                  <th className="p-4">Email</th>
+                  <th className="p-4">Joined Date</th>
+                  <th className="p-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {patients.map((patient) => (
+                  <tr key={patient.id} className="border-t border-africanviolet">
+                    <td className="p-4">{patient.name}</td>
+                    <td className="p-4">{patient.email}</td>
+                    <td className="p-4">
+                      {new Date(patient.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="p-4">
+                      <button
+                        onClick={() => fetchPatientDetails(patient.id)}
+                        className="bg-deepviolet text-white px-3 py-1 rounded hover:bg-ultraviolet"
+                      >
+                        View Details
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
   
-      <div className="bg-africanviolet shadow-lg rounded-lg p-6 mt-6">
+      {/* <div className="bg-africanviolet shadow-lg rounded-lg p-6 mt-6">
         <h2 className="text-xl font-bold mb-4 text-deepviolet">MRI Classification</h2>
         <ImageUpload onFileUpload={handleMriPredictionSubmit} />
         {mriPredictionResult && (
@@ -263,15 +414,53 @@ const DoctorDashboard = () => {
             </p>
           </div>
         )}
+      </div> */}
+      <div className="bg-africanviolet shadow-lg rounded-lg p-6 mt-6">
+        <div className="flex justify-between items-center bg-deepviolet p-4 rounded-lg mb-4">
+          <div>
+            <p className="text-periwinkle">
+              Upload an MRI scan for classification. Make your decisions with the help of an AI model. 
+            </p>
+          </div>
+          <button
+            onClick={() => setShowMriClassification(!showMriClassification)}
+            className="bg-ultraviolet text-white px-4 py-2 rounded hover:bg-africanviolet"
+          >
+            {showMriClassification ? "Hide Form" : "Classify MRI"}
+          </button>
+        </div>
+        {showMriClassification && (
+          <div>
+            <ImageUpload onFileUpload={handleMriPredictionSubmit} />
+            {mriPredictionResult && (
+              <div className="mt-4 bg-gray-50 p-4 rounded">
+                <h3 className="text-lg font-bold text-deepviolet">MRI Prediction Result:</h3>
+                <p className="text-periwinkle">
+                  <strong>Class:</strong> {mriPredictionResult.class}
+                </p>
+                <p className="text-periwinkle">
+                  <strong>Confidence:</strong> {mriPredictionResult.confidence}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
   
       <div className="bg-africanviolet shadow-lg rounded-lg p-6 mt-6">
         <h2 className="text-xl font-bold mb-4 text-deepviolet">Alzheimer Prediction</h2>
         <div className="flex justify-between items-center bg-deepviolet p-4 rounded-lg mb-4">
           <div>
-            <p className="text-periwinkle">
-              Use this form to predict the likelihood of Alzheimer's based on patient data.
-            </p>
+          <p className="text-periwinkle">
+  Use this form to predict the likelihood of Alzheimer's based on patient data.
+  The MMSE is a widely used tool to assess cognitive function and screen for dementia.
+</p>
+<ul className="text-periwinkle">
+  <li><strong>Normal Cognition (24 and above):</strong> No signs of dementia; cognitive function is intact.</li>
+  <li><strong>Mild Dementia (19–23):</strong> Early stage with slight memory and cognitive challenges.</li>
+  <li><strong>Moderate Dementia (10–18):</strong> Noticeable impairments affecting daily activities.</li>
+  <li><strong>Severe Dementia (9 and below):</strong> Significant cognitive decline requiring full-time care.</li>
+</ul>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
