@@ -67,7 +67,7 @@ pyasn1_modules==0.4.1
 pycparser==2.22
 Pygments==2.18.0
 pyparsing==3.2.0
-python == 10.10.9
+python == 3.10.9
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2024.2
