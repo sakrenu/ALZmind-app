@@ -29,7 +29,8 @@ dist/
 build/
 
 node_modules/
-.env
+backend/.env
+
 
 client/src/firebaseServiceAccount.json
 client/src/cloudinaryConfig.json
