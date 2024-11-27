@@ -30,6 +30,11 @@ const DoctorDashboard = () => {
   const [clinicalNotes, setClinicalNotes] = useState('');
   const [showNotes, setShowNotes] = useState(false);
   const [showNextMeetForm, setShowNextMeetForm] = useState(false);
+  const [prescription, setPrescription] = useState('');
+  const [prescriptionImage, setPrescriptionImage] = useState(null);
+  const [showPrescriptionForm, setShowPrescriptionForm] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+
   const [nextMeetData, setNextMeetData] = useState({
     patient: '',
     date: '',
@@ -164,6 +169,48 @@ const DoctorDashboard = () => {
     if (user) {
       await updateDoc(doc(db, 'users', user.uid), { clinicalNotes: clinicalNotes });
       setShowNotes(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchPrescription = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const docRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setPrescription(docSnap.data().prescription || '');
+          setPrescriptionImage(docSnap.data().prescriptionImage || null);
+        }
+      }
+    };
+
+    fetchPrescription();
+  }, []);
+
+  const handlePrescriptionChange = (e) => {
+    setPrescription(e.target.value);
+  };
+
+  const handleImageUpload = (url) => {
+    setPrescriptionImage(url);
+  };
+
+  const handlePatientSelect = (patient) => {
+    setSelectedPatient(patient);
+    setShowPrescriptionForm(true);
+  };
+
+  const handleSavePrescription = async () => {
+    if (selectedPatient) {
+      await updateDoc(doc(db, 'users', selectedPatient.id), {
+        prescription: prescription,
+        prescriptionImage: prescriptionImage
+      });
+      setShowPrescriptionForm(false);
+      setSelectedPatient(null);
+      setPrescription('');
+      setPrescriptionImage(null);
     }
   };
 
@@ -673,7 +720,114 @@ const DoctorDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* <div className="bg-africanviolet shadow-lg rounded-lg p-6 mb-6">
+        <h2 className="text-xl font-bold mb-4 text-white">Patients List</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-deepviolet text-white">
+              <tr>
+                <th className="p-4">Name</th>
+                <th className="p-4">Email</th>
+                <th className="p-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {patients.map((patient) => (
+                <tr key={patient.id} className="border-t border-africanviolet">
+                  <td className="p-4">{patient.name}</td>
+                  <td className="p-4">{patient.email}</td>
+                  <td className="p-4">
+                    <button
+                      onClick={() => handlePatientSelect(patient)}
+                      className="bg-deepviolet text-white px-3 py-1 rounded hover:bg-ultraviolet"
+                    >
+                      Add Prescription
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {showPrescriptionForm && selectedPatient && (
+        <div className="bg-africanviolet shadow-lg rounded-lg p-6 mb-6">
+          <h2 className="text-xl font-bold mb-4 text-white">Add Prescription for {selectedPatient.name}</h2>
+          <textarea
+            value={prescription}
+            onChange={handlePrescriptionChange}
+            className="w-full p-2 border rounded bg-lavender text-deepviolet mb-4"
+            rows="4"
+            placeholder="Enter prescription details..."
+          ></textarea>
+          <ImageUpload onFileUpload={handleImageUpload} />
+          <button
+            onClick={handleSavePrescription}
+            className="bg-deepviolet text-white px-4 py-2 rounded mt-2 hover:bg-ultraviolet"
+          >
+            Save Prescription
+          </button>
+        </div>
+      )} */}
+      <div className="bg-africanviolet shadow-lg rounded-lg p-6 mb-6">
+        <h2 className="text-xl font-bold mb-4 text-white">Patients List</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-deepviolet text-white">
+              <tr>
+                <th className="p-4">Name</th>
+                <th className="p-4">Email</th>
+                <th className="p-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {patients.map((patient) => (
+                <tr key={patient.id} className="border-t border-africanviolet">
+                  <td className="p-4">{patient.name}</td>
+                  <td className="p-4">{patient.email}</td>
+                  <td className="p-4">
+                    <button
+                      onClick={() => handlePatientSelect(patient)}
+                      className="bg-deepviolet text-white px-3 py-1 rounded hover:bg-ultraviolet"
+                    >
+                      Add Prescription
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {showPrescriptionForm && selectedPatient && (
+        <div className="bg-africanviolet shadow-lg rounded-lg p-6 mb-6">
+          <h2 className="text-xl font-bold mb-4 text-white">Add Prescription for {selectedPatient.name}</h2>
+          <textarea
+            value={prescription}
+            onChange={handlePrescriptionChange}
+            className="w-full p-2 border rounded bg-lavender text-deepviolet mb-4"
+            rows="4"
+            placeholder="Enter prescription details..."
+          ></textarea>
+          <input
+            type="file"
+            onChange={(e) => handleImageUpload(URL.createObjectURL(e.target.files[0]))}
+            className="mb-4"
+          />
+          <button
+            onClick={handleSavePrescription}
+            className="bg-deepviolet text-white px-4 py-2 rounded mt-2 hover:bg-ultraviolet"
+          >
+            Save Prescription
+          </button>
+        </div>
+      )}
     </div>
+
+    
     
   );
   

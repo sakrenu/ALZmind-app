@@ -22,6 +22,10 @@ const PatientDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showCaregiversManual, setShowCaregiversManual] = useState(false);
   const [emergencyContact, setEmergencyContact] = useState('');
+  const [prescription, setPrescription] = useState('');
+  const [prescriptionImage, setPrescriptionImage] = useState(null);
+  const [showPrescription, setShowPrescription] = useState(false);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -151,6 +155,34 @@ const PatientDashboard = () => {
       alert("Emergency contact updated successfully!");
     }
   };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated API delay
+      setUserData({
+        name: "John Doe",
+        email: "john@example.com",
+        nextTest: "Cognitive Assessment - April 20, 2024",
+      });
+      setLoading(false);
+    };
+
+    const fetchPrescription = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const docRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setPrescription(docSnap.data().prescription || '');
+          setPrescriptionImage(docSnap.data().prescriptionImage || null);
+        }
+      }
+    };
+
+    fetchUserData();
+    fetchPrescription();
+  }, []);
+
 
 
   if (loading) {
@@ -441,6 +473,29 @@ const PatientDashboard = () => {
 
 {/*     
     </div> */}
+
+<div className="mt-8 bg-africanviolet shadow-lg rounded-lg p-6 mb-6">
+        <div className="flex justify-between items-center bg-deepviolet p-4 rounded-lg mb-4">
+          <div>
+            <h2 className="text-xl font-bold mb-2 text-white">My Prescription</h2>
+          </div>
+          <button
+            onClick={() => setShowPrescription(!showPrescription)}
+            className="bg-ultraviolet text-white px-4 py-2 rounded hover:bg-africanviolet"
+          >
+            {showPrescription ? "Hide Prescription" : "View Prescription"}
+          </button>
+        </div>
+        {showPrescription && (
+          <div className="mt-4">
+            {prescriptionImage && (
+              <img src={prescriptionImage} alt="Prescription" className="w-full mb-4" />
+            )}
+            <p className="text-periwinkle">{prescription}</p>
+          </div>
+        )}
+      </div>
+
     <div className=" mt-8 bg-africanviolet shadow-lg rounded-lg p-6 mb-6">
         <div className="flex justify-between items-center bg-deepviolet p-4 rounded-lg mb-4">
           <div>
@@ -541,7 +596,7 @@ const PatientDashboard = () => {
   </li>
 
   <li>
-    <strong  className='text-deepviolet'>Seek Professional Guidance:</strong>
+    <strong >Seek Professional Guidance:</strong>
     <ul className="list-disc list-inside">
       <li>Regularly consult with healthcare providers for updates on their condition.</li>
       <li>Learn about medications and therapies that may help manage symptoms.</li>
