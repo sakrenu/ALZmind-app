@@ -1,4 +1,4 @@
-# Alzheimer's Detect App - React Client
+#AlzMind- Your Alzheimer's Support App (React Client)
 
 ## Overview
 This project is the client-side application for the Alzheimer's Detection App. It is built using React.js and leverages `react-scripts` to manage the build and development process. The application provides a user interface for detecting Alzheimer's through an AI-driven backend.
